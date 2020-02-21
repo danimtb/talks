@@ -1,0 +1,8 @@
+[requires]
+opencv/3.4.5@conan/stable
+
+[generators]
+cmake_find_package
+
+[imports]
+etc/haarcascades, haarcascade_frontalface_alt.xml -> bin
