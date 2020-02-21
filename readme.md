@@ -6,6 +6,6 @@ A place to host the materials used in my talks
 
 - Date: 12 Dec 2018
 
-- [Slides](http://htmlpreview.github.io/?https://github.com/danimtb/talks/blob/master/131218_JenkinsDockerConan/ICPDEUJDC.html)
+- [Slides](http://htmlpreview.github.io/?https://github.com/danimtb/talks/blob/master/131218_JenkinsDockerConan/JenkinsDockerConan.html)
 
 - [Code](https://github.com/danimtb/ci_iot)
