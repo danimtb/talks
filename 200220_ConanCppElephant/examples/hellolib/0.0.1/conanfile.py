@@ -14,18 +14,17 @@ class HelloLib(ConanFile):
     options = {"shared": [True, False]}
     default_options = {"shared": False}
 
-    generators = "cmake", "cmake_find_package"
     exports_sources = "include/*", "src/*", "CMakeLists.txt", "readme.md"
 
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.configure()
         return cmake
-    
+
     def build(self):
         cmake = self._configure_cmake()
         cmake.build()
-    
+
     def package(self):
         cmake = self._configure_cmake()
         cmake.install()

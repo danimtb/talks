@@ -23,11 +23,11 @@ class HelloLib(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         return cmake
-    
+
     def build(self):
         cmake = self._configure_cmake()
         cmake.build()
-    
+
     def package(self):
         cmake = self._configure_cmake()
         cmake.install()

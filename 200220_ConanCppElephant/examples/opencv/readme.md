@@ -13,10 +13,10 @@ Steps to build and run the example:
 $ mkdir build
 $ cd build
 
-# Install C++ dependencies
-$ conan install ..
+# Install dependencies
+$ conan install ../conanfile.txt
 
-# Compile as usual with CMake
+# Compile as usual with CMake (example with Visual Studio)
 $ cmake .. -G "Visual Studio 15 2017 Win64"
 $ cmake --build . --config Release
 

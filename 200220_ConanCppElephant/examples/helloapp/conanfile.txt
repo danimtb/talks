@@ -1,5 +1,6 @@
 [requires]
 hellolib/0.0.1
+# hellolib/0.0.2
 
 [generators]
 cmake_find_package
