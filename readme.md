@@ -4,6 +4,14 @@ A place to host the materials used in my talks.
 
 All the slides can be found at https://slides.com/danimanzaneque
 
+## [ESP] ROS sin rodeos: Desarrollo nativo en C++ para robótica
+
+- Date: 28 Oct 2026
+
+- [Slides](http://htmlpreview.github.io/?https://github.com/danimtb/talks/blob/master/281026_RosSinRodeos/RosSinRodeos.html)
+
+- [Code](https://github.com/conan-io/ros-conan)
+
 ## [ENG] Conan, C++ and the elephant in the room
 
 - Date: 20 Feb 2020
