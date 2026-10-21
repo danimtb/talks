@@ -207,6 +207,20 @@ style: |
     padding-right: 42%;
   }
 
+  /* Logo al presentar Conan. El PNG es ancho: cubo y wordmark, con margen transparente. */
+  section.herramienta {
+    background-image: url("img/conan-cube.png"), linear-gradient(180deg, var(--blue-ultra) 0%, #ffffff 38%);
+    background-repeat: no-repeat, no-repeat;
+    background-position: right 48px center, 0 0;
+    background-size: 300px auto, auto;
+    padding-right: 340px;
+    font-size: 26px;
+  }
+  section.herramienta h2 { font-size: 1.22em; margin-bottom: 0.28em; }
+  section.herramienta h4 { font-size: 1.05em; margin: 0.22em 0 0; }
+  section.herramienta ul { margin: 0 0 0.08em; }
+  section.herramienta li { margin: 0.06em 0; }
+
   /* La captura va a la derecha, pero el pie sigue a todo el ancho, por debajo. */
   section.pose {
     --pose-gap: 52px;
@@ -225,7 +239,7 @@ style: |
 
 ![bg right:45% contain](img/frog_gopigo.png)
 
-![h:52](img/conan-logo.png)
+![h:52](img/jfrog-conan-logo.png)
 
 ###### ROSCon España 2026 · Valencia
 
@@ -237,10 +251,12 @@ style: |
 Ingeniero Software · Conan / JFrog
 
 <!--
-⏱ 0:00 → 0:30
-Preséntate en una frase: Daniel, Software Engineer en el equipo de Conan en JFrog.
-Conan no lo expliques aquí: la sala conoce ROS y, muy probablemente, no Conan. Va una diapositiva solo para eso, justo después del mapa.
-Idea que quieres dejar desde el principio: si programas en C++, usar ROS no debería obligarte a dar un rodeo.
+⏱ 0:00 → 0:40
+Hola a todos. Soy Daniel Manzaneque y trabajo como ingeniero de software en el equipo de Conan, en JFrog.
+
+Soy ingeniero industrial y, antes de dedicarme al software, trabajé con robots. De hecho, mi tesis la hice con ROS 1, en tiempos de Indigo.
+
+Hoy os quiero contar cómo usar ROS sin rodeos: una experiencia de desarrollo nativa en C++.
 -->
 
 ---
@@ -255,10 +271,12 @@ Idea que quieres dejar desde el principio: si programas en C++, usar ROS no debe
 
 
 <!--
-⏱ 0:30 → 1:30
-Hilo conductor de tu charla de Toronto: cuenta en un minuto la historia del robot.
-Lo importante es la sensación: "yo solo quería programar mi robot en C++, y ROS me hacía dar vueltas".
-Para poner la foto, sustituye el bloque de cita por: ![bg right:40%](img/robot.jpg)
+⏱ 0:40 → 1:15
+Para contarlo voy a usar un ejemplo que nos acompañará toda la charla: un robot pequeño, con un ordenador modesto, tipo Raspberry Pi.
+
+Buena parte del software ya está hecho en C++: el control de bajo nivel de los motores y la lectura de los sensores.
+
+Y en algún momento quise añadirle ROS 2, para que hablase con otros nodos y herramientas. Pero...
 -->
 
 ---
@@ -274,16 +292,17 @@ Antes de escribir una línea útil, hay que:
 3. Crear un workspace de colcon con su estructura
 4. Escribir `package.xml` y adaptar el CMake a `ament_cmake`
 5. Acordarse de hacer `source setup.bash`
+6. ...
 
-**Demasiadas cosas antes de llegar al robot. Y un condicionante más...**
-
-- Estoy desarrollando en Windows
+**Demasiadas cosas antes de llegar al robot**
 
 <!--
-⏱ 1:30 → 2:30
-Pregunta a la sala: "¿A quién se le ha olvidado alguna vez el source?" Suele haber risas y manos.
-No es una crítica a ROS: todo esto tiene sentido dentro del ecosistema.
-El problema es para quien viene del mundo C++ y ya tiene su forma de trabajar.
+⏱ 1:15 → 1:55
+Yo solo quería que mi código C++ hablase ROS. Que pudiera comunicarse con otros nodos para tareas más complejas, como navegación o SLAM, o para incorporar otros sensores.
+
+Pero antes de escribir una sola línea útil tenía que usar la versión de Ubuntu que pide la distro. Instalar un montón de paquetes de sistema que ni sabía para qué servían. Crear un workspace, convertir mi proyecto en un paquete de ROS y acordarme de ejecutar los scripts de entorno.
+
+Demasiadas cosas antes de llegar al robot.
 -->
 
 ---
@@ -299,13 +318,21 @@ El problema es para quien viene del mundo C++ y ya tiene su forma de trabajar.
 3. **Desplegar** Compilar en el robot y cruzar los dedos. → **Construir fuera**, llevar solo lo necesario.
 
 <!--
-⏱ 2:30 → 3:10
-Mapa de la charla. Sigues el ciclo de vida del robot de Toronto: instalar, desarrollar, desplegar.
-Para cada fase: un problema concreto y cómo lo resolvemos con Conan.
-No definas Conan todavía: la siguiente diapositiva es solo eso, en cuatro frases.
+⏱ 1:55 → 2:45
+A estos pasos los llamo rodeos: cosas que haces no porque aporten algo a tu robot, sino porque la herramienta te lo exige.
+
+Después de un tiempo volví a ROS y vi que la experiencia seguía siendo muy parecida. En el equipo de Conan nos fijamos en tres rodeos que creemos que se pueden evitar.
+
+Al instalar: en lugar de instalar ROS en el sistema, tratarlo como una dependencia más, como cualquier librería.
+
+Al desarrollar: en lugar de adaptar tu proyecto a ROS, seguir con tu proyecto C++ de siempre.
+
+Y al desplegar: en lugar de compilar en el robot y cruzar los dedos, construir fuera y llevar solo lo necesario.
 -->
 
 ---
+
+<!-- _class: herramienta -->
 
 ###### La herramienta
 
@@ -317,20 +344,32 @@ No definas Conan todavía: la siguiente diapositiva es solo eso, en cuatro frase
 #### Cada librería es una **receta**
 - Hay miles en ConanCenter (repositorio central) y puedes crear las tuyas.
 
-#### Resuelve el **grafo** completo de dependencias transitivas
-- Obtiene un **binario por configuración**. Puede compilar desde fuentes.
-
 #### Agnóstico al build-system
 - Compatible con CMake, Bazel, Meson, MSBuild...
 
+#### Resuelve el **grafo** completo de dependencias transitivas
+- Obtiene un **binario por configuración**. Puede compilar desde fuentes.
+
+
 <!--
-⏱ 3:10 → 4:00
-Cuatro ideas, y para. No abras el manual: nada de package_id, revisiones ni opciones.
-1. Es un proyecto open source, no un producto cerrado. El código y las recetas se pueden leer.
-2. La unidad es la receta. ConanCenter es el repositorio público; el remoto puede ser también el vuestro.
-   Esto prepara el final: las recetas de ROS todavía no están en ConanCenter.
-3. Un binario por configuración (sistema, arquitectura, compilador, Debug o Release). Si falta, se compila una vez.
-4. No pide cambiar de build system. El grafo se explica al instalar; el perfil, al desplegar.
+⏱ 2:45 → 4:15
+Y aquí entra Conan, la herramienta que nos permite hacer todo esto.
+
+[Pregunta al público y pausa] ¿Conocéis Conan? ¿Habéis oído hablar de Conan (no me refiero a el bárbaro)?
+
+Conan es un gestor de paquetes de software y binarios para C/C++. Lo que pip es para Python, Conan lo es para C y C++
+
+
+- Es un proyecto open source, especialmente desarrollado con el feedback y la colaboración de los 
+usuruarios. Todo el código de la herramienta es abierto al igual que el de las recetas.
+
+- Cada librería se describe en una receta o conanfile. Las recetas para librerías open source viven en ConanCenter, el repositorio público. Además cualquiera puede tener su propio servidor remoto donde alojar sus propias recetas.
+
+- Es compatible con cualquier build system. CMake es el que mejor integración tiene, pero también Bazel, Meson, MSBuild o el vuestro propio.
+
+- No solo gestiona paquetes software si no que es capaz de gestionar binarios. Un binario por 
+configuración (sistema, arquitectura, compilador, Debug o Release). En caso de que el binario no exista, 
+el usuario puece invocar a conan para que ejecute la receta compile desde fuentes.
 -->
 
 ---
@@ -349,14 +388,20 @@ Cuatro ideas, y para. No abras el manual: nada de package_id, revisiones ni opci
 > Ni el gestor del sistema ni el contenedor sirven para desarrollar: no tienen el grafo de tu proyecto.
 
 <!--
-⏱ 4:00 → 5:10
-Apt y Docker son los dos reflejos de la sala. No los ridiculices: di la carencia que comparten.
-Ejemplo vivido: Humble en producción y Kilted en el portátil. La respuesta habitual es una imagen por distro.
-Dentro de la imagen, rosdep sigue instalando lo que haya. Nadie comprueba que solo exista una OpenCV.
-El IDE, el depurador y el hardware quedan al otro lado del contenedor.
-Docker como forma de *entregar* el robot sigue valiendo: lo verás en el deployer. Lo que no vale es desarrollar ahí.
-Si sale: en macOS y Windows ni siquiera hay este camino oficial.
-La charla anterior en esta misma sala trata el testing multidistro: si encaja, enlaza con ella.
+⏱ 4:15 → 5:50
+Una vez que ya sabemos lo que es Conan, empecemos por el primer rodeo, la instalación de ROS
+
+Todos los que estáis aquí seguramente hayáis tenido que instalar ROS en algún momento. Consiste en instalarlo via APT y rosdep. Pero esto varía según la versión de Ubuntu que estés utilizando. Ya ni hablamos de si pretendes desarrollar en una plataforma que no sea Ubuntu.
+
+La vía suele ser utilizar imágenes de docker, una para cada versión de ROS con su distro de ubuntu. A las que tienes que sumar tu software.
+
+Dentro de la imagen, apt y rosdep sigue instalando lo que haya...
+
+Y añade las librerías adicionales que necesites, una para cada imagen, y asegúrate de que no conflicten con versiones de la misma librería en el sitema. Y ahora hazlo una vez por cada una de las imágenes de docker que tienes dependiendo de la versión de ROS que utilices
+
+Ni el sistema ni el contenedor conocen el grafo de dependencias de tu proyecto. Y además te obligan a desarrollar dentro de la imagen, algo que veremos en el segundo rodeo.
+
+[Si encaja: la charla anterior en esta sala habla de testing multidistro. Se puede enlazar con ella.]
 -->
 
 ---
@@ -385,10 +430,14 @@ conan install conanfile.txt --build=missing
 - El mismo flujo en **Linux, macOS y Windows**
 
 <!--
-⏱ 5:10 → 6:00
-Un requires más, igual que OpenCV. Ese es todo el mensaje de la diapositiva.
-Nombra Docker. La sala vive ahí. El contenedor no resuelve versiones: el grafo, sí. La siguiente diapositiva es ese grafo, dibujado.
-(Simplificado: en el repo se usa además el perfil profiles/ros, que fija C++17 y la versión de CMake. El perfil se explica al desplegar; aquí no.)
+⏱ 5:50 → 6:50
+¿Cómo lo resuelve Conan? Tratando a ROS como una dependencia más.
+
+Esto es un conanfile.txt, el equivalente a un requirements.txt de Python. Aquí ROS Kilted aparece como una dependencia de mi proyecto, igual que cualquier otra librería, por ejemplo OpenCV.
+
+Conan instala ROS en su caché, que es una carpeta en tu espacio de usuario. No va a /opt/ros ni a una imagen, así que no choca con las librerías del sistema. Y como cada versión vive en su propia carpeta, puedes tener varias distros de ROS en la misma máquina y elegir cuál usa cada proyecto.
+
+Para instalarlo todo basta un conan install. Y es la misma experiencia en Linux, en macOS y en Windows.
 -->
 
 ---
@@ -408,14 +457,16 @@ Nombra Docker. La sala vive ahí. El contenedor no resuelve versiones: el grafo,
 - **Una sola definición.** Dos OpenCV son dos `cv::Mat` en el mismo programa
 
 <!--
-⏱ 6:00 → 7:30
-No leas el esquema. Señálalo. Rojo: hay dos versiones. Verde: un solo nodo, Eigen.
-1. Conflicto: hay dos OpenCV y, sin que nadie las pidiera, dos libpng. En apt o en la imagen esto enlaza y parece que funciona.
-2. Consistencia: Eigen entra por ROS. Si tu código también lo pide, tiene que ser ese mismo nodo. No es una propiedad de "estar en el mismo Ubuntu": hay que resolver el grafo. Se da por hecha y no lo es.
-3. ODR, la One Definition Rule: dilo si quieres, la slide ya no lleva la sigla. En un programa C++ cada entidad tiene una sola definición. Dos OpenCV son dos `cv::Mat`. El linker no elige por ti. Conan ni siquiera llega a enlazar. El mismo compilador y el mismo ABI son la otra mitad: una sola versión compilada de otra forma también son dos definiciones.
-El grafo que sí cierra tiene una sola opencv/4.12 y una sola libpng, y la de ROS tiene que aceptar esa versión. Si no puede, no compilas.
-El lockfile (conan.lock) congela ese grafo cerrado. Una frase, y sigues: saldrá otra vez en el resumen.
-Las versiones son para la historia. Si ros-kilted no depende de OpenCV directamente, di cv_bridge o el paquete de visión que sí lo haga: el mecanismo es el mismo.
+⏱ 6:50 → 7:50
+Y como Conan conoce el grafo completo, puede comprobar que sea consistente. Mirad este caso.
+
+Mi nodo depende de ROS Kilted y de OpenCV 4.12. Pero ROS, por dentro, usa OpenCV 4.6. Y cada OpenCV trae su propia libpng.
+
+Eigen sale en verde: aparece una sola vez. Lo rojo son paquetes repetidos con versiones distintas.
+
+En C++ cada cosa debe tener una sola definición. Con dos OpenCV tendríamos dos cv::Mat en el mismo programa: puede fallar al enlazar o, peor, enlazar y fallar en ejecución.
+
+Conan no deja pasar este grafo. Os avisa del conflicto al instalar, antes de compilar una sola línea.
 -->
 
 ---
@@ -430,12 +481,13 @@ En `apt`, o en la imagen de Ubuntu, hay una OpenCV.
 
 ### Ahora
 La versión va en el `conanfile.txt`.
-Es el conflicto del grafo anterior: o encaja, o no se compila.
+Es el conflicto del grafo anterior: o encaja, o Conan no lo instala.
 
 <!--
-⏱ 7:30 → 8:10
-El caso que más resuena con quien ha sufrido ROS y visión. No repitas la teoría: señala el árbol anterior.
-Dato para dar color (verifícalo antes): Ubuntu 24.04 trae OpenCV 4.6 en apt. Las imágenes oficiales de ROS parten de esa misma base.
+⏱ 7:50 → 8:15
+Y esto pasa en la vida real. Ubuntu 24.04 trae OpenCV 4.6 en apt. Si necesitas otra, antes la compilabas dentro de la imagen y esperabas que no chocara con la de ROS.
+
+Ahora la versión va en el conanfile.txt: o encaja en el grafo, o Conan te avisa.
 -->
 
 ---
@@ -455,9 +507,14 @@ Dato para dar color (verifícalo antes): Ubuntu 24.04 trae OpenCV 4.6 en apt. La
 > Si ROS es solo una capa de un producto C++ grande, el rodeo lo paga **todo** el producto.
 
 <!--
-⏱ 8:10 → 9:00
-Piensa en una empresa con un código C++ de años (control, visión, planificación) que quiere "hablar ROS".
-Hoy tiene que reorganizar el proyecto alrededor de las convenciones de ROS, o mantener dos mundos en paralelo.
+⏱ 8:15 → 9:10
+Vamos con el segundo rodeo: desarrollar. Hoy, para usar ROS, tu proyecto tiene que hacerse ROS.
+
+Tienes que seguir la estructura del workspace. Escribir un package.xml y meter macros de ament_cmake en tu CMake. Compilar con colcon en lugar de con tu build de siempre. Y acordarte de hacer source antes de abrir el IDE, o no encontrará nada.
+
+Para muchos de vosotros, que empezáis los proyectos desde cero en ROS, esto quizá no sea un problema, aunque condiciona cómo desarrolláis.
+
+Pero pensad en mi robot, o en una empresa con años de código C++ de control, visión o planificación que quiere hablar ROS. Tiene que reorganizar el proyecto alrededor de las convenciones de ROS, o mantener dos mundos en paralelo.
 -->
 
 ---
@@ -475,13 +532,16 @@ Hoy tiene que reorganizar el proyecto alrededor de las convenciones de ROS, o ma
 > La imagen sirve para desplegar en el robot no para desarrollo.
 
 <!--
-⏱ 9:00 → 9:40
-Rodeo 1 ya dijo que el contenedor no es para desarrollar. Aquí el coste, sin repetir el grafo.
-La sala vive en Docker: no lo ridiculices. Entregar el robot en una imagen sigue valiendo; sale en el deployer.
-1. Misma imagen para el robot y el portátil. O le faltan recursos para compilar, o el robot se lleva el toolchain de desarrollo.
-2. El autocompletado, los breakpoints y gdb quedan al otro lado. Un dev container ayuda, y sigue siendo un puente.
-3. Cada ciclo pasa por volúmenes, usuarios y docker exec. Compilar y depurar se alargan.
-La siguiente diapositiva es la salida: tu CMake y tu IDE, en la máquina.
+⏱ 9:10 → 10:10
+Y a esto se suma lo que vimos en el primer rodeo. Si ROS vive en una imagen de Docker, tu desarrollo también vive dentro de esa imagen.
+
+Primero, compilas con lo que tenga la imagen. Si es la misma para el portátil y para el robot, o le faltan recursos para compilar, o el robot acaba cargando con todo el toolchain de desarrollo.
+
+Segundo, el IDE no vive ahí. El autocompletado, los breakpoints y gdb quedan al otro lado del contenedor. Un dev container ayuda, pero sigue siendo un puente.
+
+Y tercero, cada ciclo pasa por volúmenes, permisos y docker exec, así que compilar y depurar es más lento.
+
+Para nosotros, la imagen está bien para desplegar en el robot, pero no para desarrollar.
 -->
 
 ---
@@ -511,11 +571,14 @@ cmake --build --preset conan-release
 ```
 
 <!--
-⏱ 9:40 → 10:30
-Destaca que los find_package son los de siempre: se usan los ficheros de configuración que instala el propio ROS.
-No hemos reinventado ROS: lo hemos puesto donde un proyecto CMake espera encontrarlo.
-Punto fuerte que ya anunciaste: Conan no impone un build system. Genera el preset y se aparta.
-Y sales de la imagen: compilas y depuras en tu máquina. La imagen vuelve al final, solo para entregar.
+⏱ 10:10 → 11:00
+Entonces, ¿qué pinta tiene esto con Conan? Un proyecto CMake normal que usa ROS.
+
+Como ROS es una dependencia más, Conan expone sus librerías a través del find_package de siempre. Aquí veis rclcpp exactamente igual que OpenCV.
+
+Y los pasos son los habituales. conan install resuelve las dependencias y genera los ficheros que necesita CMake. Después, CMake configura y compila el proyecto. Sin workspace, sin colcon y sin hacer source de nada. Y lo podéis abrir directamente en vuestro IDE.
+
+Lo enseño con CMake porque es casi el estándar de facto, pero lo mismo aplica a cualquier otro sistema de build.
 -->
 
 ---
@@ -535,13 +598,16 @@ pose_estimation/
 ```
 
 - Sin `package.xml`, sin `ament`, sin workspace.
+- `ros-kilted`, `opencv` y `tensorflow-lite`, en un solo grafo.
 - Todo se instala con un `conan install`
 
 <!--
-⏱ 10:30 → 11:20
-Señala el layout: un CMakeLists, un conanfile, un cpp. No hay workspace ni package.xml.
-Las tres directas (ros-kilted, opencv, tensorflow-lite) cierran en un solo grafo. Una OpenCV, una sola definición. Lo contrario del grafo rojo.
-Si puedes, enseña el GIF del ejemplo (assets/output.gif) en el portátil.
+⏱ 11:00 → 11:45
+Un ejemplo real del repositorio: estimación de pose humana. Un modelo de machine learning, bueno, ahora se dice IA, estima la posición del cuerpo de una persona y publica los puntos en un topic de ROS.
+
+A la izquierda veis la imagen de la cámara con el esqueleto detectado. A la derecha, RViz recibiendo esos puntos.
+
+El proyecto son unos pocos ficheros: sin workspace de colcon y sin package.xml. Tiene tres dependencias directas, ROS Kilted, OpenCV y TensorFlow Lite, y todas se resuelven en un único grafo con un conan install.
 -->
 
 ---
@@ -554,6 +620,7 @@ Si puedes, enseña el GIF del ejemplo (assets/output.gif) en el portátil.
 
 ```bash
 conan run "ros2 run rviz2 rviz2"
+  -o ros-kilted/*:variant=desktop
 ```
 
 - Variantes según lo que necesites:
@@ -561,9 +628,10 @@ conan run "ros2 run rviz2 rviz2"
 - Los **tutoriales oficiales** siguen siendo válidos
 
 <!--
-⏱ 11:20 → 11:55
-Mensaje para los "ROSeros" de la sala: no os quitamos nada.
-turtlesim viene en la variante desktop. Si tienes una captura de turtlesim abriéndose, este es el sitio.
+⏱ 11:45 → 12:15
+Y ya que aparece RViz: no nos quedamos solo en las librerías. Las herramientas de ROS siguen funcionando.
+
+La receta de ROS tiene variantes, core, base y desktop, según lo que necesites. Con desktop tienes RViz, y con conan run lo lanzas con el entorno ya preparado. Igual con turtlesim, así que los tutoriales oficiales siguen siendo válidos.
 -->
 
 ---
@@ -585,10 +653,14 @@ colcon build
 - Es el camino inverso: **Conan entra en ROS**
 
 <!--
-⏱ 11:55 → 12:45
-Importante para no asustar a nadie: no pedimos migrar todo.
-Hay dos caminos: ROS dentro de un proyecto C++ (lo que acabas de enseñar) o Conan dentro de un workspace ROS (esto).
-Este segundo camino lo presentamos en el blog de Conan en 2024.
+⏱ 12:15 → 13:10
+Vale, ¿y si ya tenéis un desarrollo en ROS, con vuestro workspace de colcon?
+
+No hay problema. Lo anterior es como creemos que debería ser la experiencia nativa, pero también podéis hacer el camino inverso: meter Conan dentro de ROS.
+
+El año pasado añadimos a Conan el generador ROSEnv. Genera un script de entorno con las variables necesarias para que colcon y CMake encuentren las librerías instaladas con Conan.
+
+Solo hay que indicar el generador al hacer conan install y activar el entorno. A partir de ahí, colcon build compila vuestro workspace como siempre. Así podéis añadir librerías de ConanCenter como OpenCV, TensorFlow Lite o Eigen sin tocar el sistema y sin copiar código de terceros al workspace.
 -->
 
 ---
@@ -605,10 +677,12 @@ Este segundo camino lo presentamos en el blog de Conan en 2024.
 - **¿Qué hay realmente instalado en el robot?** Difícil de contestar cuando lo pregunta un cliente, una auditoría o aparece un CVE
 
 <!--
-⏱ 12:45 → 13:35
-Vuelve al robot de Toronto: aquí va tu anécdota de compilar en la placa (tiempo, memoria, swap...).
-Pregunta a la sala: "¿Quién ha compilado ROS en una Raspberry?"
-El tercer punto (toolchains que solo entiende una persona) lo resuelve la diapositiva del perfil, no esta.
+⏱ 13:10 → 13:50
+Y llegamos al último rodeo: desplegar. ¿Cómo llevamos el código al robot?
+
+¿Compilamos en el robot? Con una placa como la mía, es inviable o lentísimo. ¿Compilación cruzada? Toolchains, sysroots y scripts difíciles de mantener. ¿Copiamos la carpeta install? Lleva rutas absolutas, y faltan las librerías de ROS del sistema. ¿Cuáles necesito y cómo las copio?
+
+Y una pregunta más: ¿qué hay realmente instalado en el robot? Si os lo pregunta un cliente, una auditoría o un CVE, ¿sabríais contestar?
 -->
 
 ---
@@ -620,7 +694,7 @@ El tercer punto (toolchains que solo entiende una persona) lo resuelve la diapos
 ## Compilar en tu máquina, *ejecutar en el robot*
 
 ```text
-perfil build  →  tu portátil (x86_64)   →  herramientas: CMake, ros2 CLI, generadores…
+perfil build  →  tu portátil (x86_64)   →  herramientas: CMake, ros2 CLI, toolchains…
 perfil host   →  el robot (ARM)         →  tu código y sus librerías
 ```
 
@@ -634,12 +708,14 @@ cmake --build --preset conan-release
 - **Contextos diferentes**: Conan separa lo que compila en tu máquina de lo que va al robot
 
 <!--
-⏱ 13:35 → 14:25
-Concepto clave: dos contextos. Las herramientas se compilan para tu máquina; tu código, para el robot.
-No abras todavía el fichero del perfil: la siguiente diapositiva es eso, con el toolchain incluido.
-Los binarios se pueden subir a un servidor (p. ej. Artifactory) para que nadie vuelva a compilarlos. Es el punto fuerte que anunciaste al presentar Conan: un binario por configuración.
-⚠ Antes de la charla: confirma hasta dónde está probada la compilación cruzada de ros-kilted.
-Si no está probada de punta a punta, preséntalo como "la dirección en la que vamos".
+⏱ 13:50 → 14:40
+Conan resuelve esto separando dos contextos.
+
+El contexto de build es tu portátil. Ahí corren las herramientas: CMake, el CLI de ros2, los compiladores. El contexto de host es el robot, con su arquitectura ARM. Para él van tu código y sus librerías.
+
+Cada contexto se describe una vez en un perfil: sistema, arquitectura y compilador. Al hacer conan install le pasas los dos perfiles, y Conan genera el toolchain de CMake para compilar en cruzado. Luego compilas exactamente igual que antes.
+
+Y si los binarios de alguna dependencia no existen para el robot, se compilan una vez y se suben a vuestro servidor, para que la próxima vez se reutilicen.
 -->
 
 ---
@@ -657,8 +733,8 @@ os=Linux
 arch=armv8
 compiler=gcc
 compiler.version=13
+compiler.libcxx=libstdc++11
 ...
-
 [tool_requires]
 arm-toolchain/13.2
 ```
@@ -667,14 +743,12 @@ arm-toolchain/13.2
 - Un paquete más en el grafo: versión fija, igual que cualquier librería
 
 <!--
-⏱ 14:25 → 15:20
-Ojo con la palabra: en la diapositiva anterior, «toolchain» es el fichero que Conan genera para CMake. Aquí es el compilador cruzado, empaquetado.
-Recorre el perfil de arriba abajo, sin leer cada clave.
-Los settings describen la máquina de destino. libstdc++11 no es un detalle menor: es el ABI, la mitad de la ODR que enseñaste en el grafo. Dos binarios solo se mezclan si coinciden en esto. Tampoco lo garantiza la imagen.
-tool_requires son herramientas del contexto de build, no librerías del robot. El ejemplo arm-toolchain/13.2 es el de la documentación de Conan (cross-build a Raspberry Pi): el compilador cruzado se empaqueta, corre en el portátil y sabe para qué arquitectura genera código.
-El mismo mecanismo sirve para CMake o Ninja: dejan de ser "lo que hubiera instalado en el sistema". Menciónalo de palabra; no hace falta otra diapositiva.
-No enseñes la receta del toolchain. Basta la idea: el compilador también tiene versión, y entra en el grafo.
-Misma cautela que antes: si el cruce de ros-kilted no está probado de punta a punta, esto es la dirección, no un demo cerrado.
+⏱ 14:40 → 15:30
+Así es un perfil. Describe el sistema operativo, la arquitectura, el compilador y su versión, la librería estándar, si es Release o Debug... En general, todo lo que afecta al binario generado. Y podéis añadir campos propios.
+
+Además, el perfil puede pedir paquetes que hacen falta para compilar. Aquí aparece arm-toolchain, que contiene el compilador cruzado para el robot. Corre en vuestra máquina y genera binarios ARM.
+
+Conan lo instala como una dependencia más, con su versión fija, y prepara el entorno antes de lanzar la compilación. Así todo el equipo compila exactamente con el mismo compilador.
 -->
 
 ---
@@ -695,14 +769,18 @@ conan install conanfile.txt -pr:h=robot_arm64 --deployer=runtime_deploy --deploy
 - **SBOM** del grafo (CycloneDX): qué versión de qué va en cada robot
 
 <!--
-⏱ 15:20 → 16:10
-runtime_deploy es ese corte: binarios y librerías compartidas, sin las herramientas. full_deploy copia el árbol completo; dilo solo si preguntan.
-Números de examples/minimal_cpp_node: 54 nodos de runtime (host) y 1902 de build. CMake sale centenares de veces, una por receta.
-Si el portátil aguanta, abre graph.html y quita «Show build-requires»: el grafo se vacía. Eso es lo que no viaja.
-No pongas una captura: con todo encendido es una mancha; sin herramientas, una columna de nombres que no se lee desde la sala.
-⚠ Verifica con el ejemplo qué deployer basta para un nodo ROS: ROS carga RMW y plugins de forma dinámica
-y usa recursos del ament index, así que puede hacer falta full_deploy.
-El SBOM conecta con seguridad y cumplimiento normativo: un argumento potente para la industria.
+⏱ 15:30 → 16:45
+Y por último, ¿qué llevamos al robot? Para eso Conan tiene los deployers: scripts que recogen lo necesario de cada paquete y lo dejan en una carpeta.
+
+Como Conan sabe qué tipo de paquete es cada uno y en qué contexto se usa, puede separar lo que se ejecuta de lo que solo sirve para compilar. runtime_deploy copia solo los ejecutables y las librerías dinámicas.
+
+En el ejemplo más sencillo del repositorio, el runtime son 54 nodos: rclcpp, rmw, los mensajes. Las herramientas de build son 1902 nodos, y eso se queda en vuestra máquina.
+
+[Opcional, si el portátil aguanta: abrir graph.html y desmarcar «Show build-requires». El grafo se vacía. Eso es lo que no viaja.]
+
+El resultado es una carpeta. La copiáis con scp o la metéis en una imagen mínima, y el robot no necesita Conan.
+
+Y como Conan conoce el grafo, puede generar un SBOM en CycloneDX. Eso responde a la pregunta de antes: qué versión de qué va en cada robot.
 -->
 
 ---
@@ -713,15 +791,15 @@ El SBOM conecta con seguridad y cumplimiento normativo: un argumento potente par
 
 | | Habitual | Conan |
 |---|---|---|
-| Instalar | El sistema, o una imagen por distro | La caché: varias distros conviven |
-| Versiones | Lo que den `apt` y `rosdep` | Un grafo consistente y un lockfile |
+| Instalar | El sistema, o una imagen por distro | Caché con diferentes versiones conviviendo. Grafo de dependencias consistente |
 | Desarrollar | Workspace, `package.xml`, `ament`, `colcon` | CMake de siempre y `find_package` |
-| Desplegar | Compilar en el robot o scripts frágiles | Perfiles build/host, deployers y SBOM |
+| Desplegar | Imagen de docker con toda la distro de ROS | Perfiles build/host, deployers para runtime |
 
 <!--
-⏱ 16:10 → 16:45
-No leas la tabla. Una frase: "el desarrollador C++ trabaja como siempre, y ROS se adapta a él".
-Si te sobra un segundo: la fila de instalar es apt y Docker; la de desarrollar, el workspace y la imagen; la de versiones es el conflicto, la ODR y el lockfile.
+⏱ 16:45 → 17:15
+Resumiendo. Para instalar, ROS pasa a ser una dependencia más, en una caché donde conviven varias versiones y con un grafo consistente. Para desarrollar, tu CMake de siempre con find_package. Y para desplegar, perfiles de build y host y un deployer que lleva al robot solo el runtime.
+
+Volviendo a mi robot pequeño: es justo lo que necesitaba.
 -->
 
 ---
@@ -738,11 +816,12 @@ Si te sobra un segundo: la fila de instalar es apt y Docker; la de desarrollar, 
 Issues, ideas y críticas: **todas bienvenidas**
 
 <!--
-⏱ 16:45 → 17:20
-Ser transparente genera confianza: no estás vendiendo un producto terminado, aunque vengas de una empresa.
-Vuelve al principio: es open source. Las recetas están en el repo, se leen y se discuten. Por eso pides ayuda.
-Deja el enlace en pantalla: está en grande para que lo apunten. No lo deletrees.
-En Windows hay que activar las rutas largas antes del conan install (por si alguien pregunta).
+⏱ 17:15 → 18:15
+Siendo honestos, esta es nuestra visión, y cada caso es un mundo. Por eso necesitamos conocer los vuestros.
+
+Todo lo que os he contado lo podéis probar ya. Las recetas están en el repositorio ros-conan. Hoy está disponible ROS Kilted, probado en Linux con gcc 13, en macOS con Clang y en Windows con MSVC. Y hay varios ejemplos: CMake puro, un workspace de colcon, un workspace de Conan y el de estimación de pose.
+
+Si esto que os he contado os resulta familiar, si habéis experimentado estos problemas, si veis que Conan os podría ayudar para integrar ROS en vuestros sistemas robóticos, echadle un vistazo, probad y dadnos feedback. Estaré encantado de hablar sobre todo esto
 -->
 
 ---
@@ -766,11 +845,6 @@ Más info:
 - *Robotics with Conan: consuming ROS as a regular package* - `blog.conan.io`
 
 <!--
-⏱ 17:20 → 19:20. Un minuto o dos, no más.
-Si la sala arranca, una pregunta. Si nadie pregunta, no rellenes: "¿Quién mantiene más de una distro, cada una en su imagen?" y al pasillo.
-
-- ¿Os encaja trabajar con **CMake puro** frente a colcon?
-- ¿Os ayudaría probar contra **varias distros** sin contenedores?
-- ¿Qué **librerías y SDKs de hardware** necesitáis junto a ROS?
-- ¿Qué **distros y plataformas** priorizamos?
+⏱ 18:15 → 18:30. Preguntas hasta 20:00.
+Y nada más, muchas gracias a todos. Si tenéis preguntas y hay tiempo, este es el momento y si no podemos comentarlo después. Gracias!
 -->
