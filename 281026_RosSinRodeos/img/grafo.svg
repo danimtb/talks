@@ -16,15 +16,15 @@
     <rect x="8" y="6" width="172" height="48" fill="#dbf4e5" stroke="#3e7a2d" stroke-width="2"/>
     <text x="94" y="30" text-anchor="middle" dominant-baseline="central" fill="#0e5a35">eigen/3.4.0</text>
     <rect x="214" y="6" width="190" height="48" fill="#fdecec" stroke="#a11a1a" stroke-width="2"/>
-    <text x="309" y="30" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">opencv/4.6.0</text>
+    <text x="309" y="30" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">opencv/4.12.0</text>
     <rect x="478" y="6" width="196" height="48" fill="#fdecec" stroke="#a11a1a" stroke-width="2"/>
-    <text x="576" y="30" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">libpng/1.6.40</text>
+    <text x="576" y="30" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">libpng/1.6.44</text>
     <rect x="812" y="6" width="220" height="48" fill="#fdecec" stroke="#a11a1a" stroke-width="2"/>
-    <text x="922" y="30" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">libpng/1.6.44</text>
+    <text x="922" y="30" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">libpng/1.6.48</text>
     <rect x="60" y="104" width="292" height="48" fill="#ffffff" stroke="#d7deec" stroke-width="2"/>
     <text x="206" y="128" text-anchor="middle" dominant-baseline="central" fill="#082b6b">ros-kilted/2026.06.17</text>
     <rect x="812" y="104" width="220" height="48" fill="#fdecec" stroke="#a11a1a" stroke-width="2"/>
-    <text x="922" y="128" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">opencv/4.12.0</text>
+    <text x="922" y="128" text-anchor="middle" dominant-baseline="central" fill="#a11a1a">opencv/4.14.0</text>
     <rect x="474" y="200" width="180" height="48" fill="#ffffff" stroke="#1a73e8" stroke-width="2"/>
     <text x="564" y="224" text-anchor="middle" dominant-baseline="central" fill="#082b6b">mi_nodo</text>
   </g>
