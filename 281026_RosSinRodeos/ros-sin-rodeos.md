@@ -197,16 +197,6 @@ style: |
     background-repeat: no-repeat !important;
   }
 
-  /* Mascota de ros2. --tools-gap la separa del borde: súbelo para traerla hacia el centro. */
-  section.tools {
-    --tools-gap: 150px;
-    background-image: url("img/frog_turtlebot2.png"), linear-gradient(180deg, var(--blue-ultra) 0%, #ffffff 38%);
-    background-repeat: no-repeat, no-repeat;
-    background-position: right var(--tools-gap) center, 0 0;
-    background-size: auto 68%, auto;
-    padding-right: 42%;
-  }
-
   /* Logo al presentar Conan. El PNG es ancho: cubo y wordmark, con margen transparente. */
   section.herramienta {
     background-image: url("img/conan-cube.png"), linear-gradient(180deg, var(--blue-ultra) 0%, #ffffff 38%);
